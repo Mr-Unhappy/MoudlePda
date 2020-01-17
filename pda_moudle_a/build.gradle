@@ -1,0 +1,67 @@
+if (Boolean.valueOf(rootProject.ext.isModule_B)) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+
+android {
+    compileSdkVersion rootProject.ext.versions.compileSdkVersion
+    buildToolsVersion rootProject.ext.versions.buildToolsVersion
+
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.versions.minSdkVersion
+        targetSdkVersion rootProject.ext.versions.targetSdkVersion
+        versionCode rootProject.ext.versions.versionCode
+        versionName rootProject.ext.versions.versionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        if (Boolean.valueOf(rootProject.ext.isModule_B)) {
+            //组件模式下设置applicationId
+            applicationId "com.example.pda_moudle_b"
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+
+    sourceSets {
+        main {
+            if (Boolean.valueOf(rootProject.ext.isModule_B)) {//apk
+                manifest.srcFile 'src/main/AndroidManifest.xml'
+                println('B 独立')
+            } else {
+                manifest.srcFile 'src/main/manifest/AndroidManifest.xml'
+                println('B 组件')
+                java {
+                    //library模式下，排除java/debug文件夹下的所有文件
+                    exclude '*module'
+                }
+            }
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation project(':pda_common')
+
+    annotationProcessor rootProject.ext.dependencies["arouter_compiler"]
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+}

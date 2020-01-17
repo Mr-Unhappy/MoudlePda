@@ -1,0 +1,2 @@
+include ':app', ':pda_common', ':pda_main', ':pda_moudle_a', ':pda_module_b'
+rootProject.name='MoudlePda'
